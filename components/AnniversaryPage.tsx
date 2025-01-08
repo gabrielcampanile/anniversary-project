@@ -17,10 +17,10 @@ export default function AnniversaryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-pink-300 via-purple-300 to-indigo-400">
+    <div className="min-h-screen bg-gradient-to-r from-pink-300 via-purple-300 to-indigo-400 pb-20">
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-4xl font-bold text-center text-white mb-8">Our 3rd Anniversary</h1>
-        <CountdownTimer startDate="2022-01-01" /> {/* Replace with your actual start date */}
+        <CountdownTimer startDate="2022-01-01" />
         <ImageGallery />
         <BackgroundMusic />
       </div>
