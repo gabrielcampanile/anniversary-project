@@ -1,10 +1,10 @@
 import Image from 'next/image'
 
 const images = [
-  '/placeholder.svg?height=300&width=300',
-  '/placeholder.svg?height=300&width=300',
-  '/placeholder.svg?height=300&width=300',
-  // Add more image URLs as needed
+    '/aviao.jpg',
+    '/praia.jpg',
+    '/paraquedismo.jpg',
+  // Adicione mais URLs de imagens conforme necessário
 ]
 
 export default function ImageGallery() {
@@ -24,4 +24,3 @@ export default function ImageGallery() {
     </div>
   )
 }
-
