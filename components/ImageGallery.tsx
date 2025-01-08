@@ -13,84 +13,84 @@ interface Memory {
 const memories: Memory[] = [
   {
     id: 1,
-    imageUrl: '/aviao.jpg',
+    imageUrl: '/images/aviao.jpg',
     location: 'Boituva, SP',
     date: '2021-11-20',
     description: 'Onde tudo começou'
   },
   {
     id: 2,
-    imageUrl: '/praia.jpg',
+    imageUrl: '/images/praia.jpg',
     location: 'Peruíbe, SP',
     date: '2022-02-28',
     description: 'Nossa primeira viagem para a praia'
   },
   {
     id: 3,
-    imageUrl: '/paraquedismo.jpg',
+    imageUrl: '/images/paraquedismo.jpg',
     location: 'Boituva, SP',
     date: '2022-01-26',
     description: 'Primeiro pôr do sol'
   },
   {
     id: 4,
-    imageUrl: '/acad.jpg',
+    imageUrl: '/images/acad.jpg',
     location: 'Boituva, SP',
     date: '2023-03-09',
     description: 'Primeiro treino juntos'
   },
   {
     id: 5,
-    imageUrl: '/campos.jpg',
+    imageUrl: '/images/campos.jpg',
     location: 'Campos do Jordão, SP',
     date: '2024-11-15',
     description: 'Primeira viagem internacional rs'
   },
   {
     id: 6,
-    imageUrl: '/friends.jpg',
+    imageUrl: '/images/friends.jpg',
     location: "Manu's House",
     date: '2023-12-30',
     description: 'Primeiro reveillon com nossos amigos'
   },
   {
     id: 7,
-    imageUrl: '/objetivo.jpg',
+    imageUrl: '/images/objetivo.jpg',
     location: 'Boituva, SP',
     date: '2019-06-15',
     description: 'Estudiantes'
   },
   {
     id: 8,
-    imageUrl: '/pisci.jpg',
+    imageUrl: '/images/pisci.jpg',
     location: 'Iperó, SP',
     date: '2024-01-01',
     description: 'Aniversário de 2 anos'
   },
   {
     id: 9,
-    imageUrl: '/praia2.jpg',
+    imageUrl: '/images/praia2.jpg',
     location: 'Itanhaém, SP',
     date: '2023-11-18',
     description: 'Primeira viagem sozinhos'
   },
   {
     id: 10,
-    imageUrl: '/show.jpg',
+    imageUrl: '/images/show.jpg',
     location: 'Alfenas, MG',
     date: '2024-06-22',
     description: 'Primeiro show 🤘'
   },
   {
     id: 11,
-    imageUrl: '/tranca.jpg',
+    imageUrl: '/images/tranca.jpg',
     location: "Manu's House",
     date: '2022-09-17',
     description: 'Aprendendo a jogar tranca'
   },
   {
     id: 12,
-    imageUrl: '/work.jpg',
+    imageUrl: '/images/work.jpg',
     location: 'Alfenas, MG',
     date: '2023-06-22',
     description: 'Trabalhando nossa sorte'
