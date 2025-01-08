@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX } from 'lucide-react'
-import YouTube from 'react-youtube'
+import YouTube, { YouTubeProps } from 'react-youtube'
 
 interface Song {
   id: number
@@ -18,13 +18,14 @@ const initialPlaylist: Song[] = [
 ]
 
 export default function BackgroundMusic() {
-  const [playlist, setPlaylist] = useState<Song[]>(initialPlaylist)
+  const [playlist] = useState<Song[]>(initialPlaylist)
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentSong, setCurrentSong] = useState(0)
   const [duration, setDuration] = useState(0)
   const [currentTime, setCurrentTime] = useState(0)
   const [isMuted, setIsMuted] = useState(false)
   const playerRef = useRef<YouTube>(null)
+  const intervalRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
     if (playerRef.current) {
@@ -36,15 +37,23 @@ export default function BackgroundMusic() {
     }
   }, [isPlaying, currentSong])
 
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+      }
+    }
+  }, [])
+
   const togglePlay = () => setIsPlaying(!isPlaying)
   const nextSong = () => setCurrentSong((prev) => (prev + 1) % playlist.length)
   const prevSong = () => setCurrentSong((prev) => (prev - 1 + playlist.length) % playlist.length)
 
-  const onReady = (event: { target: any }) => {
+  const onReady: YouTubeProps['onReady'] = (event) => {
     setDuration(event.target.getDuration())
   }
 
-  const onStateChange = (event: { target: any, data: number }) => {
+  const onStateChange: YouTubeProps['onStateChange'] = (event) => {
     if (event.data === YouTube.PlayerState.PLAYING) {
       setIsPlaying(true)
       startTimeUpdate(event.target)
@@ -54,15 +63,16 @@ export default function BackgroundMusic() {
     }
   }
 
-  const startTimeUpdate = (player: any) => {
-    const interval = setInterval(() => {
+  const startTimeUpdate = (player: YouTube.Player) => {
+    intervalRef.current = setInterval(() => {
       setCurrentTime(player.getCurrentTime())
     }, 1000)
-    return () => clearInterval(interval)
   }
 
   const stopTimeUpdate = () => {
-    setCurrentTime(0)
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current)
+    }
   }
 
   const formatTime = (time: number) => {
@@ -135,4 +145,3 @@ export default function BackgroundMusic() {
     </div>
   )
 }
-
