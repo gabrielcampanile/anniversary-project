@@ -9,12 +9,17 @@ export default function CountdownTimer({ startDate }: CountdownTimerProps) {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const start = new Date(startDate).getTime()
-      const now = new Date().getTime()
-      const elapsed = now - start
+      const start = new Date(startDate)
+      const now = new Date()
+      
+      // Ajuste para o fuso horário do Brasil (UTC-3)
+      const brasiliaOffset = -3 * 60 * 60 * 1000
+      const adjustedNow = new Date(now.getTime() + brasiliaOffset)
+      
+      const elapsed = adjustedNow.getTime() - start.getTime()
 
-      const years = Math.floor(elapsed / (1000 * 60 * 60 * 24 * 365))
-      const days = Math.floor((elapsed % (1000 * 60 * 60 * 24 * 365)) / (1000 * 60 * 60 * 24))
+      const years = Math.floor(elapsed / (1000 * 60 * 60 * 24 * 365.25))
+      const days = Math.floor((elapsed % (1000 * 60 * 60 * 24 * 365.25)) / (1000 * 60 * 60 * 24))
       const hours = Math.floor((elapsed % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
       const minutes = Math.floor((elapsed % (1000 * 60 * 60)) / (1000 * 60))
       const seconds = Math.floor((elapsed % (1000 * 60)) / 1000)
