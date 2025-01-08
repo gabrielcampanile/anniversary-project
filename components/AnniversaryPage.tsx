@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Header from './Header'
-import Footer from './Footer'
+// import Header from './Header'
+// import Footer from './Footer'
 import CountdownTimer from './CountdownTimer'
 import ImageGallery from './ImageGallery'
 import BackgroundMusic from './BackgroundMusic'
