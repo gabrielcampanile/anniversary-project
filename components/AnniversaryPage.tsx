@@ -37,7 +37,20 @@ const initialMemories: Memory[] = [
     date: '2021-11-20',
     description: 'Onde tudo começou'
   },
-  // ... (outros itens de memória)
+  {
+    id: 2,
+    image: '/images/praia.jpg',
+    location: 'Peruíbe, SP',
+    date: '2022-02-28',
+    description: 'Nossa primeira viagem para a praia'
+  },
+  {
+    id: 3,
+    image: '/images/paraquedismo.jpg',
+    location: 'Boituva, SP',
+    date: '2022-01-26',
+    description: 'Primeiro pôr do sol'
+  },
 ]
 
 export default function AnniversaryPage() {
