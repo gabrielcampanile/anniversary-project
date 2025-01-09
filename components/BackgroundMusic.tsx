@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX } from 'lucide-react'
-import YouTube, { YouTubeProps } from 'react-youtube'
+import { Play, Pause, SkipBack, SkipForward } from 'lucide-react'
+import YouTube, { YouTubeProps, YouTubePlayer } from 'react-youtube'
 
 interface Song {
   id: number
@@ -11,19 +11,11 @@ interface Song {
   youtubeId: string
 }
 
-const initialPlaylist: Song[] = [
-  { id: 1, title: "Nossa Canção", artist: "Banda do Amor", youtubeId: "dQw4w9WgXcQ" },
-  { id: 2, title: "Primeiro Encontro", artist: "Cantores Românticos", youtubeId: "ZbZSe6N_BXs" },
-  { id: 3, title: "Valsa do Aniversário", artist: "Orquestra da Celebração", youtubeId: "fJ9rUzIMcZQ" },
-]
-
-export default function BackgroundMusic() {
-  const [playlist] = useState<Song[]>(initialPlaylist)
-  const [isPlaying, setIsPlaying] = useState(false)
+export default function BackgroundMusic({ playlist }: { playlist: Song[] }) {
+  const [isPlaying, setIsPlaying] = useState(true)
   const [currentSong, setCurrentSong] = useState(0)
   const [duration, setDuration] = useState(0)
   const [currentTime, setCurrentTime] = useState(0)
-  const [isMuted, setIsMuted] = useState(false)
   const playerRef = useRef<YouTube>(null)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
 
@@ -51,6 +43,9 @@ export default function BackgroundMusic() {
 
   const onReady: YouTubeProps['onReady'] = (event) => {
     setDuration(event.target.getDuration())
+    if (isPlaying) {
+      event.target.playVideo()
+    }
   }
 
   const onStateChange: YouTubeProps['onStateChange'] = (event) => {
@@ -63,7 +58,7 @@ export default function BackgroundMusic() {
     }
   }
 
-  const startTimeUpdate = (player: YouTube.Player) => {
+  const startTimeUpdate = (player: YouTubePlayer) => {
     intervalRef.current = setInterval(() => {
       setCurrentTime(player.getCurrentTime())
     }, 1000)
@@ -81,19 +76,12 @@ export default function BackgroundMusic() {
     return `${minutes}:${seconds.toString().padStart(2, '0')}`
   }
 
-  const toggleMute = () => {
-    setIsMuted(!isMuted)
-    if (playerRef.current) {
-      if (isMuted) {
-        playerRef.current.internalPlayer.unMute()
-      } else {
-        playerRef.current.internalPlayer.mute()
-      }
-    }
+  if (playlist.length === 0) {
+    return null
   }
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-purple-800 text-white py-2 px-4 shadow-lg">
+    <div className="sticky bottom-0 left-0 right-0 bg-purple-800 text-white py-2 px-4">
       <div className="flex justify-between items-center">
         <div className="flex-1">
           <h3 className="font-bold text-lg">{playlist[currentSong].title}</h3>
@@ -108,9 +96,6 @@ export default function BackgroundMusic() {
           </button>
           <button onClick={nextSong} className="text-white hover:text-purple-300">
             <SkipForward size={24} />
-          </button>
-          <button onClick={toggleMute} className="text-white hover:text-purple-300">
-            {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
           </button>
         </div>
         <div className="flex-1 flex flex-col items-end">
