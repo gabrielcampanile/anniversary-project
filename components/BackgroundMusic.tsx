@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX } from 'lucide-react'
-import YouTube from 'react-youtube'
+import { Play, Pause, SkipBack, SkipForward } from 'lucide-react'
+import YouTube, { YouTubeProps, YouTubePlayer } from 'react-youtube'
 
 interface Song {
   id: number
@@ -12,34 +12,43 @@ interface Song {
 }
 
 export default function BackgroundMusic({ playlist }: { playlist: Song[] }) {
-  const [isPlaying, setIsPlaying] = useState(false)
+  const [isPlaying, setIsPlaying] = useState(true)
   const [currentSong, setCurrentSong] = useState(0)
   const [duration, setDuration] = useState(0)
   const [currentTime, setCurrentTime] = useState(0)
-  const [isMuted, setIsMuted] = useState(false)
   const playerRef = useRef<YouTube>(null)
+  const intervalRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.YT && window.YT.Player) {
-      if (playerRef.current) {
-        if (isPlaying) {
-          playerRef.current.internalPlayer.playVideo()
-        } else {
-          playerRef.current.internalPlayer.pauseVideo()
-        }
+    if (playerRef.current) {
+      if (isPlaying) {
+        playerRef.current.internalPlayer.playVideo()
+      } else {
+        playerRef.current.internalPlayer.pauseVideo()
       }
     }
   }, [isPlaying, currentSong])
+
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+      }
+    }
+  }, [])
 
   const togglePlay = () => setIsPlaying(!isPlaying)
   const nextSong = () => setCurrentSong((prev) => (prev + 1) % playlist.length)
   const prevSong = () => setCurrentSong((prev) => (prev - 1 + playlist.length) % playlist.length)
 
-  const onReady = (event: { target: any }) => {
+  const onReady: YouTubeProps['onReady'] = (event) => {
     setDuration(event.target.getDuration())
+    if (isPlaying) {
+      event.target.playVideo()
+    }
   }
 
-  const onStateChange = (event: { target: any, data: number }) => {
+  const onStateChange: YouTubeProps['onStateChange'] = (event) => {
     if (event.data === YouTube.PlayerState.PLAYING) {
       setIsPlaying(true)
       startTimeUpdate(event.target)
@@ -49,32 +58,22 @@ export default function BackgroundMusic({ playlist }: { playlist: Song[] }) {
     }
   }
 
-  const startTimeUpdate = (player: any) => {
-    const interval = setInterval(() => {
+  const startTimeUpdate = (player: YouTubePlayer) => {
+    intervalRef.current = setInterval(() => {
       setCurrentTime(player.getCurrentTime())
     }, 1000)
-    return () => clearInterval(interval)
   }
 
   const stopTimeUpdate = () => {
-    setCurrentTime(0)
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current)
+    }
   }
 
   const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60)
     const seconds = Math.floor(time % 60)
     return `${minutes}:${seconds.toString().padStart(2, '0')}`
-  }
-
-  const toggleMute = () => {
-    setIsMuted(!isMuted)
-    if (playerRef.current) {
-      if (isMuted) {
-        playerRef.current.internalPlayer.unMute()
-      } else {
-        playerRef.current.internalPlayer.mute()
-      }
-    }
   }
 
   if (playlist.length === 0) {
@@ -98,9 +97,6 @@ export default function BackgroundMusic({ playlist }: { playlist: Song[] }) {
           <button onClick={nextSong} className="text-white hover:text-purple-300">
             <SkipForward size={24} />
           </button>
-          {/* <button onClick={toggleMute} className="text-white hover:text-purple-300">
-            {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
-          </button> */}
         </div>
         <div className="flex-1 flex flex-col items-end">
           <div className="w-full max-w-[200px] h-1 bg-purple-600 rounded-full mb-2">
