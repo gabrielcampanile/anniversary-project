@@ -1,25 +1,106 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { Plus, Edit, Trash } from 'lucide-react'
+import { Plus, Edit } from 'lucide-react'
 import MemoryImage from './MemoryImage'
 
 interface Memory {
   id: number
-  image: string
+  image: File | string
   location: string
   date: string
   description: string
 }
 
-interface ImageGalleryProps {
-  memories: Memory[]
-  onAddMemory: (memory: Omit<Memory, 'id'>) => void
-  onEditMemory: (id: number, memory: Omit<Memory, 'id'>) => void
-  onRemoveMemory: (id: number) => void
-}
+const initialMemories: Memory[] = [
+  {
+    id: 1,
+    image: '/images/aviao.jpg',
+    location: 'Boituva, SP',
+    date: '2021-11-20',
+    description: 'Onde tudo começou'
+  },
+  {
+    id: 2,
+    image: '/images/praia.jpg',
+    location: 'Peruíbe, SP',
+    date: '2022-02-28',
+    description: 'Nossa primeira viagem para a praia'
+  },
+  {
+    id: 3,
+    image: '/images/paraquedismo.jpg',
+    location: 'Boituva, SP',
+    date: '2022-01-26',
+    description: 'Primeiro pôr do sol'
+  },
+  {
+    id: 4,
+    image: '/images/acad.jpg',
+    location: 'Boituva, SP',
+    date: '2023-03-09',
+    description: 'Primeiro treino juntos'
+  },
+  {
+    id: 5,
+    image: '/images/campos.jpg',
+    location: 'Campos do Jordão, SP',
+    date: '2024-11-15',
+    description: 'Primeira viagem internacional rs'
+  },
+  {
+    id: 6,
+    image: '/images/friends.jpg',
+    location: "Manu's House",
+    date: '2023-12-30',
+    description: 'Primeiro reveillon com nossos amigos'
+  },
+  {
+    id: 7,
+    image: '/images/objetivo.jpg',
+    location: 'Boituva, SP',
+    date: '2019-06-15',
+    description: 'Estudiantes'
+  },
+  {
+    id: 8,
+    image: '/images/pisci.jpg',
+    location: 'Iperó, SP',
+    date: '2024-01-01',
+    description: 'Aniversário de 2 anos'
+  },
+  {
+    id: 9,
+    image: '/images/praia2.jpg',
+    location: 'Itanhaém, SP',
+    date: '2023-11-18',
+    description: 'Primeira viagem sozinhos'
+  },
+  {
+    id: 10,
+    image: '/images/show.jpg',
+    location: 'Alfenas, MG',
+    date: '2024-06-22',
+    description: 'Primeiro show 🤘'
+  },
+  {
+    id: 11,
+    image: '/images/tranca.jpg',
+    location: "Manu's House",
+    date: '2022-09-17',
+    description: 'Aprendendo a jogar tranca'
+  },
+  {
+    id: 12,
+    image: '/images/work.jpg',
+    location: 'Alfenas, MG',
+    date: '2023-06-22',
+    description: 'Trabalhando nossa sorte'
+  }
+]
 
-export default function ImageGallery({ memories, onAddMemory, onEditMemory, onRemoveMemory }: ImageGalleryProps) {
+export default function ImageGallery() {
+  const [memories, setMemories] = useState<Memory[]>(initialMemories)
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<number | null>(null)
   const [newMemory, setNewMemory] = useState<Omit<Memory, 'id'>>({
@@ -38,23 +119,20 @@ export default function ImageGallery({ memories, onAddMemory, onEditMemory, onRe
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      const reader = new FileReader()
-      reader.onload = (event) => {
-        if (event.target) {
-          setNewMemory(prev => ({ ...prev, image: event.target.result as string }))
-        }
-      }
-      reader.readAsDataURL(e.target.files[0])
+      setNewMemory(prev => ({ ...prev, image: e.target.files![0] }))
     }
   }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (editingId !== null) {
-      onEditMemory(editingId, newMemory)
+      setMemories(memories.map(memory => 
+        memory.id === editingId ? { ...newMemory, id: editingId } : memory
+      ))
       setEditingId(null)
     } else {
-      onAddMemory(newMemory)
+      const id = memories.length > 0 ? Math.max(...memories.map(m => m.id)) + 1 : 1
+      setMemories([...memories, { ...newMemory, id }])
     }
     setShowForm(false)
     setNewMemory({ image: '', location: '', date: '', description: '' })
@@ -70,7 +148,8 @@ export default function ImageGallery({ memories, onAddMemory, onEditMemory, onRe
     }, 100)
   }
 
-  const cancelEditing = () => {
+  const removeMemory = (id: number) => {
+    setMemories(memories.filter(memory => memory.id !== id))
     setShowForm(false)
     setEditingId(null)
     setNewMemory({ image: '', location: '', date: '', description: '' })
@@ -152,20 +231,25 @@ export default function ImageGallery({ memories, onAddMemory, onEditMemory, onRe
             ></textarea>
           </div>
           <div className="flex justify-end space-x-2">
-            <button
-              type="button"
-              onClick={cancelEditing}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
-            >
-              Cancelar
-            </button>
-            {editingId !== null && (
+            {editingId !== null ? (
               <button
                 type="button"
-                onClick={() => onRemoveMemory(editingId)}
+                onClick={() => removeMemory(editingId)}
                 className="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
               >
-                <Trash size={20} />
+                Remover
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  setShowForm(false)
+                  setEditingId(null)
+                  setNewMemory({ image: '', location: '', date: '', description: '' })
+                }}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+              >
+                Cancelar
               </button>
             )}
             <button
