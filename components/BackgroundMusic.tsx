@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX } from 'lucide-react'
-import YouTube, { YouTubeProps } from 'react-youtube'
+import YouTube from 'react-youtube'
 
 interface Song {
   id: number
@@ -11,49 +11,35 @@ interface Song {
   youtubeId: string
 }
 
-const initialPlaylist: Song[] = [
-  { id: 1, title: "Nossa Canção", artist: "Banda do Amor", youtubeId: "dQw4w9WgXcQ" },
-  { id: 2, title: "Primeiro Encontro", artist: "Cantores Românticos", youtubeId: "ZbZSe6N_BXs" },
-  { id: 3, title: "Valsa do Aniversário", artist: "Orquestra da Celebração", youtubeId: "fJ9rUzIMcZQ" },
-]
-
-export default function BackgroundMusic() {
-  const [playlist] = useState<Song[]>(initialPlaylist)
+export default function BackgroundMusic({ playlist }: { playlist: Song[] }) {
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentSong, setCurrentSong] = useState(0)
   const [duration, setDuration] = useState(0)
   const [currentTime, setCurrentTime] = useState(0)
   const [isMuted, setIsMuted] = useState(false)
   const playerRef = useRef<YouTube>(null)
-  const intervalRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
-    if (playerRef.current) {
-      if (isPlaying) {
-        playerRef.current.internalPlayer.playVideo()
-      } else {
-        playerRef.current.internalPlayer.pauseVideo()
+    if (typeof window !== 'undefined' && window.YT && window.YT.Player) {
+      if (playerRef.current) {
+        if (isPlaying) {
+          playerRef.current.internalPlayer.playVideo()
+        } else {
+          playerRef.current.internalPlayer.pauseVideo()
+        }
       }
     }
   }, [isPlaying, currentSong])
-
-  useEffect(() => {
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current)
-      }
-    }
-  }, [])
 
   const togglePlay = () => setIsPlaying(!isPlaying)
   const nextSong = () => setCurrentSong((prev) => (prev + 1) % playlist.length)
   const prevSong = () => setCurrentSong((prev) => (prev - 1 + playlist.length) % playlist.length)
 
-  const onReady: YouTubeProps['onReady'] = (event) => {
+  const onReady = (event: { target: any }) => {
     setDuration(event.target.getDuration())
   }
 
-  const onStateChange: YouTubeProps['onStateChange'] = (event) => {
+  const onStateChange = (event: { target: any, data: number }) => {
     if (event.data === YouTube.PlayerState.PLAYING) {
       setIsPlaying(true)
       startTimeUpdate(event.target)
@@ -63,16 +49,15 @@ export default function BackgroundMusic() {
     }
   }
 
-  const startTimeUpdate = (player: YouTube.Player) => {
-    intervalRef.current = setInterval(() => {
+  const startTimeUpdate = (player: any) => {
+    const interval = setInterval(() => {
       setCurrentTime(player.getCurrentTime())
     }, 1000)
+    return () => clearInterval(interval)
   }
 
   const stopTimeUpdate = () => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current)
-    }
+    setCurrentTime(0)
   }
 
   const formatTime = (time: number) => {
@@ -92,8 +77,12 @@ export default function BackgroundMusic() {
     }
   }
 
+  if (playlist.length === 0) {
+    return null
+  }
+
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-purple-800 text-white py-2 px-4 shadow-lg">
+    <div className="sticky bottom-0 left-0 right-0 bg-purple-800 text-white py-2 px-4">
       <div className="flex justify-between items-center">
         <div className="flex-1">
           <h3 className="font-bold text-lg">{playlist[currentSong].title}</h3>
@@ -109,9 +98,9 @@ export default function BackgroundMusic() {
           <button onClick={nextSong} className="text-white hover:text-purple-300">
             <SkipForward size={24} />
           </button>
-          <button onClick={toggleMute} className="text-white hover:text-purple-300">
+          {/* <button onClick={toggleMute} className="text-white hover:text-purple-300">
             {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
-          </button>
+          </button> */}
         </div>
         <div className="flex-1 flex flex-col items-end">
           <div className="w-full max-w-[200px] h-1 bg-purple-600 rounded-full mb-2">
