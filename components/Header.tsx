@@ -57,8 +57,8 @@ export default function Header({ playlist, onAddSong, onEditSong, onRemoveSong }
       </div>
       <nav className="hidden md:flex">
         <ul className="flex space-x-4">
-          <li><a href="#inicio" className="hover:text-pink-400 transition-colors">Início</a></li>
-          <li><a href="#memorias" className="hover:text-pink-400 transition-colors">Memórias</a></li>
+          {/* <li><a href="#inicio" className="hover:text-pink-400 transition-colors">Início</a></li>
+          <li><a href="#memorias" className="hover:text-pink-400 transition-colors">Memórias</a></li> */}
           <li className="relative">
             <button onClick={toggleDropdown} className="flex items-center hover:text-pink-400 transition-colors">
               <Music className="mr-1" />
