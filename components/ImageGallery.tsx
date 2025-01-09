@@ -40,8 +40,9 @@ export default function ImageGallery({ memories, onAddMemory, onEditMemory, onRe
     if (e.target.files && e.target.files[0]) {
       const reader = new FileReader()
       reader.onload = (event) => {
-        if (event.target) {
-          setNewMemory(prev => ({ ...prev, image: event.target.result as string }))
+        const result = event.target?.result
+        if (result) {
+          setNewMemory(prev => ({ ...prev, image: result as string }))
         }
       }
       reader.readAsDataURL(e.target.files[0])
