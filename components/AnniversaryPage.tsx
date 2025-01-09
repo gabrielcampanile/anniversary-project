@@ -23,9 +23,10 @@ interface Memory {
 }
 
 const initialPlaylist: Song[] = [
-  { id: 1, title: "Nossa Canção", artist: "Banda do Amor", youtubeId: "dQw4w9WgXcQ" },
-  { id: 2, title: "Primeiro Encontro", artist: "Cantores Românticos", youtubeId: "ZbZSe6N_BXs" },
-  { id: 3, title: "Valsa do Aniversário", artist: "Orquestra da Celebração", youtubeId: "fJ9rUzIMcZQ" },
+  { id: 1, title: "Último Romance", artist: "Los Hermanos", youtubeId: "WEYV5pTjNHU" },
+  { id: 2, title: "Bohemian Rhapsody", artist: "Queen", youtubeId: "fJ9rUzIMcZQ" },
+  { id: 3, title: "Te amo Disgraça", artist: "Baco Exu", youtubeId: "qeO5EBBCPm0" },
+  { id: 4, title: "Meu Pedaço de Pecado", artist: "João Gomes", youtubeId: "H1DEczvTjgE" },
 ]
 
 const initialMemories: Memory[] = [
